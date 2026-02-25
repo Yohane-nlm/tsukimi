@@ -83,6 +83,10 @@ windows = { version = "0.62.2", features = [
   "Win32_System_Power",
 ] }
 
+[target.'cfg(target_os = "macos")'.dependencies]
+# danmakw depends on wgpu-hal::gles types on macOS.
+wgpu-hal = { git = "https://github.com/gfx-rs/wgpu.git", features = ["gles"] }
+
 [profile.release]
 lto = true
 strip = true

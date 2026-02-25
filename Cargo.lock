@@ -5594,6 +5594,7 @@ dependencies = [
  "tracing-subscriber",
  "url",
  "uuid",
+ "wgpu-hal",
  "windows 0.62.2",
  "xattr",
 ]
