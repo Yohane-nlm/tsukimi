@@ -42,7 +42,7 @@ jobs:
       - name: Install Dependencies
         run: |
           brew update
-          brew install pkg-config gtk4 libadwaita mpv gstreamer libepoxy gettext
+          brew install pkg-config gtk4 libadwaita mpv gstreamer libepoxy gettext dylibbundler
 
       - name: Build
         run: |
@@ -52,14 +52,25 @@ jobs:
         run: |
           mkdir -p Tsukimi.app/Contents/MacOS
           mkdir -p Tsukimi.app/Contents/Resources
+          mkdir -p Tsukimi.app/Contents/Frameworks
           mkdir -p Tsukimi.app/Contents/Resources/glib-2.0/schemas
           cp share/macos/Info.plist Tsukimi.app/Contents/
           cp share/macos/AppIcon.icns Tsukimi.app/Contents/Resources/
           cp share/macos/tsukimi Tsukimi.app/Contents/MacOS/tsukimi
           cp target/${{ matrix.target }}/release/tsukimi Tsukimi.app/Contents/MacOS/tsukimi-bin
           chmod +x Tsukimi.app/Contents/MacOS/tsukimi
+
+          dylibbundler -od -b \
+            -x Tsukimi.app/Contents/MacOS/tsukimi-bin \
+            -d Tsukimi.app/Contents/Frameworks \
+            -p @executable_path/../Frameworks/
+
           cp resources/moe.tsuna.tsukimi.gschema.xml Tsukimi.app/Contents/Resources/glib-2.0/schemas/
           glib-compile-schemas Tsukimi.app/Contents/Resources/glib-2.0/schemas
+
+          # Useful for debugging missing runtime deps in CI logs.
+          otool -L Tsukimi.app/Contents/MacOS/tsukimi-bin
+
           tar -czf tsukimi-${{ matrix.target }}.tar.gz Tsukimi.app/
 
       - name: Upload artifact
