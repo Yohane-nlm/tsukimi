@@ -12,8 +12,11 @@ pub use danmakw::{
 mod stub {
     use std::cell::Cell;
 
-    use glib::subclass::prelude::*;
-    use gtk::subclass::prelude::*;
+    use gtk::{
+        glib,
+        prelude::*,
+        subclass::prelude::*,
+    };
 
     #[derive(Clone, Debug, Default)]
     pub struct Color {
@@ -107,7 +110,7 @@ mod stub {
     }
 
     pub fn init() {
-        let _ = <DanmakwArea as glib::types::StaticType>::static_type();
+        let _ = DanmakwArea::static_type();
     }
 }
 

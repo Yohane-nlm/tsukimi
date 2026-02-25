@@ -40,6 +40,8 @@ const APP_RESOURCE_PATH: &str = "/moe/tsuna/tsukimi";
 
 #[cfg(target_os = "windows")]
 const WINDOWS_LOCALEDIR: &str = "share\\locale";
+#[cfg(target_os = "macos")]
+const MACOS_LOCALEDIR: &str = "/usr/local/share/locale";
 
 pub fn locale_dir() -> &'static str {
     static FLOCALEDIR: OnceCell<&'static str> = OnceCell::new();
@@ -59,6 +61,10 @@ pub fn locale_dir() -> &'static str {
             Box::leak(locale_path.into_boxed_path())
                 .to_str()
                 .expect("Can not get locale dir")
+        }
+        #[cfg(target_os = "macos")]
+        {
+            MACOS_LOCALEDIR
         }
     })
 }

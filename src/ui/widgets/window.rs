@@ -964,6 +964,12 @@ impl Window {
         }
     }
 
+    #[cfg(target_os = "macos")]
+    fn prevent_suspend(&self) {}
+
+    #[cfg(target_os = "macos")]
+    pub fn allow_suspend(&self) {}
+
     pub async fn update_item_page(&self) {
         let nav = self.imp().mainview.visible_page();
         let Some(now_page) = nav.and_downcast_ref::<ItemPage>() else {
