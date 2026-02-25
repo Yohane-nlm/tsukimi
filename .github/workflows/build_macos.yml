@@ -52,9 +52,14 @@ jobs:
         run: |
           mkdir -p Tsukimi.app/Contents/MacOS
           mkdir -p Tsukimi.app/Contents/Resources
+          mkdir -p Tsukimi.app/Contents/Resources/glib-2.0/schemas
           cp share/macos/Info.plist Tsukimi.app/Contents/
           cp share/macos/AppIcon.icns Tsukimi.app/Contents/Resources/
-          cp target/${{ matrix.target }}/release/tsukimi Tsukimi.app/Contents/MacOS/
+          cp share/macos/tsukimi Tsukimi.app/Contents/MacOS/tsukimi
+          cp target/${{ matrix.target }}/release/tsukimi Tsukimi.app/Contents/MacOS/tsukimi-bin
+          chmod +x Tsukimi.app/Contents/MacOS/tsukimi
+          cp resources/moe.tsuna.tsukimi.gschema.xml Tsukimi.app/Contents/Resources/glib-2.0/schemas/
+          glib-compile-schemas Tsukimi.app/Contents/Resources/glib-2.0/schemas
           tar -czf tsukimi-${{ matrix.target }}.tar.gz Tsukimi.app/
 
       - name: Upload artifact

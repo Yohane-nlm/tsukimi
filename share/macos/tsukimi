@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+
+SCRIPT_DIR="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+RES_DIR="$SCRIPT_DIR/../Resources"
+SCHEMA_DIR="$RES_DIR/glib-2.0/schemas"
+
+if [ -d "$SCHEMA_DIR" ]; then
+  export GSETTINGS_SCHEMA_DIR="$SCHEMA_DIR"
+fi
+
+exec "$SCRIPT_DIR/tsukimi-bin" "$@"
