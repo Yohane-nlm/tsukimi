@@ -1,3 +1,4 @@
+use gtk::prelude::SettingsExt;
 use reqwest::Client;
 
 pub struct ReqClient;
