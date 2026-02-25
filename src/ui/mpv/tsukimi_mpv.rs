@@ -75,7 +75,50 @@ impl Default for TsukimiMPV {
         }
 
         #[cfg(target_os = "macos")]
-        let library = unsafe { libloading::os::unix::Library::new("libepoxy.0.dylib") }.unwrap();
+        let library = {
+            let mut candidates = vec![
+                "libepoxy.0.dylib".to_string(),
+                "/opt/homebrew/opt/libepoxy/lib/libepoxy.0.dylib".to_string(),
+                "/opt/homebrew/lib/libepoxy.0.dylib".to_string(),
+                "/usr/local/opt/libepoxy/lib/libepoxy.0.dylib".to_string(),
+                "/usr/local/lib/libepoxy.0.dylib".to_string(),
+            ];
+
+            if let Ok(exe) = std::env::current_exe() {
+                if let Some(macos_dir) = exe.parent() {
+                    let frameworks = macos_dir.join("../Frameworks");
+                    candidates.push(
+                        frameworks
+                            .join("libepoxy.0.dylib")
+                            .to_string_lossy()
+                            .to_string(),
+                    );
+                }
+            }
+
+            let mut last_err = None;
+            let mut loaded = None;
+
+            for candidate in &candidates {
+                match unsafe { libloading::os::unix::Library::new(candidate) } {
+                    Ok(lib) => {
+                        loaded = Some(lib);
+                        break;
+                    }
+                    Err(err) => {
+                        last_err = Some(format!("{candidate}: {err}"));
+                    }
+                }
+            }
+
+            loaded.unwrap_or_else(|| {
+                panic!(
+                    "failed to load libepoxy. tried [{}], last error: {}",
+                    candidates.join(", "),
+                    last_err.unwrap_or_else(|| "unknown".to_string())
+                )
+            })
+        };
         #[cfg(all(unix, not(target_os = "macos")))]
         let library = unsafe { libloading::os::unix::Library::new("libepoxy.so.0") }.unwrap();
         #[cfg(windows)]
