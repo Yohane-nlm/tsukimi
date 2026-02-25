@@ -1,9 +1,9 @@
 name: MacOS CI
 on:
   workflow_dispatch:
-  # push:
-  #   branches:
-  #     - 'main'
+  push:
+    branches:
+      - main
   # schedule:
   #   - cron: '0 4 * * *'
 
@@ -19,23 +19,34 @@ jobs:
       matrix:
         include:
           - arch-name: x86_64-macos
-            os: macos-latest
+            os: macos-13
             target: x86_64-apple-darwin
-            artifact: tsukimi
-            ext:
+          - arch-name: arm64-macos
+            os: macos-14
+            target: aarch64-apple-darwin
 
-    runs-on: ${{matrix.os}}
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: Cache Rust artifacts
+        uses: Swatinem/rust-cache@v2
+
       - name: Install Dependencies
         run: |
-          brew install gtk4
-          brew install libadwaita
-          rustup target add ${{matrix.target}}
-          cargo build --release --locked
+          brew update
+          brew install pkg-config gtk4 libadwaita mpv gstreamer libepoxy gettext
+
+      - name: Build
+        run: |
+          cargo build --release --locked --target ${{ matrix.target }}
 
       - name: Make MacOS package
         run: |
@@ -43,12 +54,12 @@ jobs:
           mkdir -p Tsukimi.app/Contents/Resources
           cp share/macos/Info.plist Tsukimi.app/Contents/
           cp share/macos/AppIcon.icns Tsukimi.app/Contents/Resources/
-          mv target/release/tsukimi Tsukimi.app/Contents/MacOS/
-          tar -czf tsukimi-x86_64-apple-darwin.tar.gz Tsukimi.app/
+          cp target/${{ matrix.target }}/release/tsukimi Tsukimi.app/Contents/MacOS/
+          tar -czf tsukimi-${{ matrix.target }}.tar.gz Tsukimi.app/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{matrix.artifact}}-${{matrix.target}}
+          name: tsukimi-${{ matrix.target }}
           path: tsukimi-${{matrix.target}}.tar.gz
           compression-level: 0
