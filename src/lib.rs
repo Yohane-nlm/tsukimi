@@ -6,6 +6,7 @@ use std::{
 mod app;
 mod arg;
 mod config;
+mod danmaku;
 mod gstl;
 mod macros;
 #[cfg(target_os = "linux")]
@@ -77,7 +78,7 @@ pub fn run() -> gtk::glib::ExitCode {
     gtk::gio::resources_register_include!("tsukimi.gresource")
         .expect("Failed to register resources.");
 
-    danmakw::init();
+    danmaku::init();
 
     // Initialize the GTK application
     gtk::glib::set_application_name(CLIENT_ID);

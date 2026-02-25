@@ -46,7 +46,6 @@ fnv = "1.0.7"
 rand = "0.9.2"
 base64 = "0.22.1"
 libmpv2 = "4.1.0"
-danmakw = { git = "https://github.com/tsukinaha/danmakw.git" }
 dandanapi = { git = "https://github.com/tsukinaha/dandanapi.git" }
 glow = "0.16.0"
 
@@ -83,9 +82,8 @@ windows = { version = "0.62.2", features = [
   "Win32_System_Power",
 ] }
 
-[target.'cfg(target_os = "macos")'.dependencies]
-# danmakw depends on wgpu-hal::gles types on macOS.
-wgpu-hal = { git = "https://github.com/gfx-rs/wgpu.git", features = ["gles"] }
+[target.'cfg(not(target_os = "macos"))'.dependencies]
+danmakw = { git = "https://github.com/tsukinaha/danmakw.git" }
 
 [profile.release]
 lto = true

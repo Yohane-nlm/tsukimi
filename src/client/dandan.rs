@@ -1,5 +1,10 @@
 use dandanapi::CommentData;
-use danmakw::Danmaku;
+
+use crate::danmaku::{
+    Color,
+    Danmaku,
+    DanmakuMode,
+};
 
 pub const X_APPID: &str = "e9imrhcexn";
 pub const SECRETE_KEY: &str = include_str!("../../secret/key");
@@ -14,13 +19,13 @@ impl DanmakuConvert for CommentData {
             return Danmaku {
                 content: String::new(),
                 start: 0.0,
-                color: danmakw::Color {
+                color: Color {
                     r: 0,
                     g: 0,
                     b: 0,
                     a: 0,
                 },
-                mode: danmakw::DanmakuMode::Scroll,
+                mode: DanmakuMode::Scroll,
             };
         };
 
@@ -28,13 +33,13 @@ impl DanmakuConvert for CommentData {
             return Danmaku {
                 content: m,
                 start: 0.0,
-                color: danmakw::Color {
+                color: Color {
                     r: 255,
                     g: 255,
                     b: 255,
                     a: 255,
                 },
-                mode: danmakw::DanmakuMode::Scroll,
+                mode: DanmakuMode::Scroll,
             };
         };
 
@@ -55,17 +60,17 @@ impl DanmakuConvert for CommentData {
         Danmaku {
             content: m,
             start: start * 1000.0,
-            color: danmakw::Color {
+            color: Color {
                 r: ((color >> 16) & 0xFF) as u8,
                 g: ((color >> 8) & 0xFF) as u8,
                 b: (color & 0xFF) as u8,
                 a: 255,
             },
             mode: match mode {
-                1 => danmakw::DanmakuMode::Scroll,
-                2 => danmakw::DanmakuMode::TopCenter,
-                3 => danmakw::DanmakuMode::BottomCenter,
-                _ => danmakw::DanmakuMode::Scroll,
+                1 => DanmakuMode::Scroll,
+                2 => DanmakuMode::TopCenter,
+                3 => DanmakuMode::BottomCenter,
+                _ => DanmakuMode::Scroll,
             },
         }
     }

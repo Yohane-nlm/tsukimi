@@ -1,7 +1,8 @@
 use std::sync::Arc;
 
-use danmakw::*;
 use libmpv2::Mpv;
+
+use crate::danmaku::Timer;
 
 #[derive(Clone)]
 pub struct MpvTimer {

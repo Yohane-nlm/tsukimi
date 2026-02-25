@@ -13,7 +13,7 @@ use gtk::{
     subclass::prelude::*,
 };
 
-use danmakw::DanmakwArea;
+use crate::danmaku::DanmakwArea;
 
 use super::{
     mpvglarea::MPVGLArea,
@@ -230,7 +230,7 @@ mod imp {
 
         pub danmaku_client: OnceCell<dandanapi::DanDanClient>,
 
-        pub danmaku_list: RefCell<Option<Vec<danmakw::Danmaku>>>,
+        pub danmaku_list: RefCell<Option<Vec<crate::danmaku::Danmaku>>>,
     }
 
     #[glib::object_subclass]
@@ -476,7 +476,7 @@ mod imp {
                 .start_rendering(MpvTimer::new(self.video.imp().mpv().mpv.clone()));
         }
 
-        pub fn init_danmaku(&self, danmaku: Vec<danmakw::Danmaku>, time_milis: f64) {
+        pub fn init_danmaku(&self, danmaku: Vec<crate::danmaku::Danmaku>, time_milis: f64) {
             self.danmaku_list.replace(Some(danmaku.clone()));
             self.danmaku_area.set_danmaku(danmaku);
             self.danmaku_area.set_time_milis(time_milis);
@@ -1392,7 +1392,7 @@ impl MPVPage {
 
     pub async fn request_danmaku(
         &self, request_episodes: dandanapi::RequestEpisodes,
-    ) -> Result<Vec<danmakw::Danmaku>> {
+    ) -> Result<Vec<crate::danmaku::Danmaku>> {
         let client = self
             .imp()
             .danmaku_client
@@ -1432,7 +1432,7 @@ impl MPVPage {
                 .map(|comment| comment.into_danmaku())
                 .collect::<Vec<_>>();
 
-            Ok::<Vec<danmakw::Danmaku>, anyhow::Error>(danmaku)
+            Ok::<Vec<crate::danmaku::Danmaku>, anyhow::Error>(danmaku)
         })
         .await?;
 
